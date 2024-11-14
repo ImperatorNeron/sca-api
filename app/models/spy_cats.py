@@ -1,15 +1,19 @@
+from typing import TYPE_CHECKING
 from app.models.base import BaseModel
 from sqlalchemy import (
     Integer,
     String,
 )
-from sqlalchemy.orm import Mapped, mapped_column, validates
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.mixins import IdIntPkMixin, UpdateCreateDateTimeMixin
 from app.schemas.spy_cats import ReadSpyCatSchema
 
+if TYPE_CHECKING:
+    from app.models.missions import Mission
 
-class SpyCats(
+
+class SpyCat(
     IdIntPkMixin,
     UpdateCreateDateTimeMixin,
     BaseModel,
@@ -19,6 +23,7 @@ class SpyCats(
     breed: Mapped[str] = mapped_column(String(100))
     salary: Mapped[int] = mapped_column(Integer)
 
+    mission: Mapped["Mission"] = relationship("Mission", back_populates="spy_cat")
 
     def to_read_model(self):
         return ReadSpyCatSchema(

@@ -5,7 +5,9 @@ from abc import (
 from typing import Type
 
 from app.db.db import database_helper
+from app.repositories.missions import MissionRepository
 from app.repositories.spy_cats import SpyCatRepository
+from app.repositories.targets import TargetRepository
 
 
 class AbstractUnitOfWork(ABC):
@@ -13,6 +15,8 @@ class AbstractUnitOfWork(ABC):
     repositories and database transactions."""
 
     spy_cats: Type[SpyCatRepository]
+    missions: Type[MissionRepository]
+    targets: Type[TargetRepository]
 
     @abstractmethod
     async def __aenter__(self): ...
@@ -31,6 +35,8 @@ class BaseUnitOfWork(AbstractUnitOfWork):
     async def __aenter__(self):
         self.session = await self._get_session()
         self.spy_cats = SpyCatRepository(session=self.session)
+        self.missions = MissionRepository(session=self.session)
+        self.targets = TargetRepository(session=self.session)
         return self
 
     async def __aexit__(self, *args):
