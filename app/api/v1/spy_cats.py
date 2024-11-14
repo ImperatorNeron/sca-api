@@ -9,6 +9,7 @@ from app.schemas.spy_cats import (
     UpdateSpyCatSchema,
 )
 from app.services.spy_cats import AbstractSpyCatService
+from app.use_cases.spy_cats.create import CreateSpyCatUseCase
 from app.utils.unit_of_work import AbstractUnitOfWork, UnitOfWork
 
 
@@ -40,8 +41,8 @@ async def create_spy_cat(
     container: Annotated[Container, Depends(get_container)],
     uow: Annotated[AbstractUnitOfWork, Depends(UnitOfWork)],
 ):
-    service: AbstractSpyCatService = container.resolve(AbstractSpyCatService)
-    return await service.create_spy_cat(uow=uow, spy_cat_in=spy_cat_in)
+    use_case: CreateSpyCatUseCase = container.resolve(CreateSpyCatUseCase)
+    return await use_case.execute(uow=uow, spy_cat_in=spy_cat_in)
 
 
 @router.patch("/{spy_cat_id}", response_model=ReadSpyCatSchema)
